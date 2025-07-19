@@ -1,6 +1,5 @@
-#include <stdbool.h>
-#include <tlhelp32.h>
 #include <windows.h>
+#include <tlhelp32.h>
 #include "syscalls.h"
 
 #define BUFFER_SIZE 1024
@@ -23,7 +22,7 @@ DWORD getProcessPID(const char* processName) {
     return 0;
 }
 
-BOOL IndirectPrelude(HMODULE NtdllHandle, char NtFunctionName[], PDWORD NtFunctionSSN, PUINT_PTR NtFunctionSyscall) {
+BOOL IndirectPreludeDLL(HMODULE NtdllHandle, char NtFunctionName[], PDWORD NtFunctionSSN, PUINT_PTR NtFunctionSyscall) {
     DWORD SyscallNumber = 0;
     UINT_PTR NtFunctionAddress = 0;
     UCHAR SyscallOpcodes[2] = { 0x0F, 0x05 };
