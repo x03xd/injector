@@ -4,6 +4,8 @@
 
 #define STATUS_SUCCESS (NTSTATUS)0x00000000L
 
+#define BUFFER_SIZE 114765
+
 #define InitializeObjectAttributes(p,n,a,r,s) { \
     (p)->Length = sizeof(OBJECT_ATTRIBUTES); \
     (p)->ObjectName = (n); \
