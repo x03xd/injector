@@ -3,8 +3,6 @@
 #include "syscalls/syscalls.h"
 #include "mainDLL.h"
 
-#define BUFFER_SIZE 1024
-
 
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
     switch (fdwReason) {
