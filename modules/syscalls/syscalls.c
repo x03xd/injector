@@ -2,8 +2,6 @@
 #include <tlhelp32.h>
 #include "syscalls.h"
 
-#define BUFFER_SIZE 1024
-
 
 DWORD getProcessPID(const char* processName) {
     PROCESSENTRY32 entry;
