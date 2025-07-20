@@ -1,7 +1,6 @@
 #ifndef MAINDLL_H
 #define MAINDLL_H
 
-
 #define STATUS_SUCCESS (NTSTATUS)0x00000000L
 
 #define BUFFER_SIZE 114765
@@ -14,6 +13,7 @@
     (p)->SecurityDescriptor = (s); \
     (p)->SecurityQualityOfService = NULL; \
 }
+
 
 DWORD g_NtOpenProcessSSN;
 QWORD g_NtOpenProcessSyscall;

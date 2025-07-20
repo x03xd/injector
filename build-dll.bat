@@ -3,10 +3,21 @@ setlocal
 
 set CC=gcc
 set CFLAGS=-I modules -I src
-set LDFLAGS=-lws2_32
-set OUT=mainDLL.exe
+set OUT=libEGL.dll
 
-:: Compile syscalls.asm only if not already compiled
+:: Paths
+set DEF_FILE=definitions\libEGL.def
+set LIB_FILE=definitions\libEGL.a
+
+:: Step 1: Generate import library from .def
+echo [*] Generating import library from .def...
+dlltool -d %DEF_FILE% -l %LIB_FILE% -D libEGL.dll
+if errorlevel 1 (
+    echo [!] Error while generating import library from .def
+    goto end
+)
+
+:: Step 2: Compile syscalls.asm if not already compiled
 if exist asm\syscalls.obj (
     echo [*] syscalls.obj already exists. Skipping NASM compilation.
 ) else (
@@ -18,12 +29,12 @@ if exist asm\syscalls.obj (
     )
 )
 
-:: Compile DLL
-echo [*] Compiling mainDLL.exe...
-%CC% .\src\mainDLL.c .\asm\syscalls.obj .\modules\syscalls\syscalls.c %CFLAGS% -o %OUT% %LDFLAGS% -shared
+:: Step 3: Compile the final DLL
+echo [*] Compiling libEGL.dll...
+%CC% .\src\mainDLL.c .\asm\syscalls.obj .\modules\syscalls\syscalls.c %CFLAGS% -o %OUT% -Ldefinitions -lEGL -lws2_32 -shared
 
 if errorlevel 1 (
-    echo [!] Error while compiling mainDLL.exe
+    echo [!] Error while compiling libEGL.dll
     goto end
 )
 
