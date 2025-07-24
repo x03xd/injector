@@ -25,7 +25,7 @@ DWORD WINAPI injectPayload(LPVOID param) {
     OBJECT_ATTRIBUTES OA;
 
     SIZE_T shellcodeSize = BUFFER_SIZE;
-    const char* shellcode = (const char*)maclloc(BUFFER_SIZE)
+    const char* shellcode = (const char*)malloc(BUFFER_SIZE)
     if (shellcode == NULL) {
         return 1;
     }
